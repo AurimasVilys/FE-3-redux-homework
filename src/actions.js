@@ -15,6 +15,12 @@ export const setGenreList = (list) => ({
 });
 
 export const likeMovie = (movieID) => ({
-    type: 'SET_MOVIE_LIKED',
+    type: 'LIKE_MOVIE',
     movieID,
+});
+
+export const insertLog = (key, object) => ({
+    type: 'INSERT_LOG',
+    key,
+    object
 });

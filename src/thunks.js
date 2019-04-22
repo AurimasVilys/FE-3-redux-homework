@@ -1,7 +1,7 @@
 // thunks
 import axios from "axios";
 import {endpoints} from "../config";
-import {setMovieList, setGenreList, setGenreMovieList} from './actions'
+import {setMovieList, setGenreList, setGenreMovieList, likeMovie, insertLog} from './actions'
 
 export const getMovieList = () => (dispatch) => {
 
@@ -32,8 +32,11 @@ export const getGenreMovieList = (genreID) => (dispatch) => {
 }
 
 export const setMovieLiked = (movieID) => (dispatch) => {
-    dispatch({
-        type: 'SET_MOVIE_LIKED',
-        movieID,
-    });
+    dispatch({type: 'SET_MOVIE_LIKED'});
+    dispatch(likeMovie(movieID));
+}
+
+export const AddLog = (key, object) => (dispatch) => {
+    dispatch({type: 'ADD_LOG'})
+    dispatch(insertLog(key, object));
 }

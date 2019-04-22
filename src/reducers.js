@@ -5,10 +5,9 @@ const initialState = {
     movieList: [],
     genreList: [],
     hearted: [],
-    logs: [],
 };
 
-const moviesReduces = (state = initialState, action) => {
+const moviesReducer = (state = initialState, action) => {
     switch (action.type) {
         case 'SET_MOVIE_LIST':
         case 'SET_GENRE_MOVIE_LIST':
@@ -21,7 +20,7 @@ const moviesReduces = (state = initialState, action) => {
                 ...state,
                 genreList: action.list
             };
-        case 'SET_MOVIE_LIKED':
+        case 'LIKE_MOVIE':
             if(state.hearted.some(item => action.movieID === item)) {
                 const hearted_copy = [...state.hearted];
                 const index = hearted_copy.indexOf(action.movieID);
@@ -37,15 +36,25 @@ const moviesReduces = (state = initialState, action) => {
                     hearted: [...state.hearted, action.movieID]
                 }
             }
-        case 'ADD_LOG':
+        default:
+            return state;
+    }
+}
+
+const logReducer = (state = {}, action) => {
+    switch (action.type) {
+        case 'INSERT_LOG':
             return {
-                sta
+                ...state,
+                [action.key]: action.object
             }
         default:
             return state;
     }
 }
 
+
 export default combineReducers({
-    movies: moviesReduces,
+    movies: moviesReducer,
+    logs: logReducer
 });

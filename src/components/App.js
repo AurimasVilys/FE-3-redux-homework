@@ -3,7 +3,7 @@ import Card from './Card';
 import Filter from './Filter';
 import { connect } from 'react-redux';
 import { getImageUrl } from '../../config';
-import {getMovieList, getGenreList, getGenreMovieList, setMovieLiked} from "../thunks";
+import {getMovieList, getGenreList, getGenreMovieList, setMovieLiked, AddLog} from "../thunks";
 
 class App extends React.Component {
   constructor(props) {
@@ -11,10 +11,29 @@ class App extends React.Component {
 
     props.onGetMovieList();
     props.onGetGenreList();
-
   }
+
+  componentDidMount() {
+    this.props.onAddLog('Aplikacija užsikrovė')
+  }
+
   checkIfMovieLiked = (movieID) => {
-        return this.props.hearted.some(item => movieID === item);
+    return this.props.hearted.some(item => movieID === item);
+  }
+
+  changeGenre = (genreID, genreName) => {
+    this.props.onAddLog('Pakeistas žanras į ' + genreName);
+    this.props.onGetGenreMovieList(genreID);
+  }
+
+  likeMovie = (movieID, movieName) => {
+      if(!this.checkIfMovieLiked(movieID)) {
+          this.props.onAddLog('Uždėta širdelė filmui ' + movieName);
+      }
+      else {
+          this.props.onAddLog('Nuimta širdelė filmui ' + movieName);
+      }
+      this.props.onSetMovieLike(movieID);
   }
 
   
@@ -29,7 +48,7 @@ class App extends React.Component {
                       key = {filter.id}
                       id = {filter.id}
                       name = {filter.name}
-                      click = { this.props.onGetGenreMovieList.bind(this, filter.id)  }
+                      click = { this.changeGenre.bind(this, filter.id, filter.name)  }
                   />
               ))}
           </div>
@@ -43,7 +62,7 @@ class App extends React.Component {
             score={listItem.vote_average}
             votes={listItem.vote_count}
             description={listItem.overview}
-            likeMovie = {this.props.onSetMovieLike.bind(this, listItem.id)}
+            likeMovie = {this.likeMovie.bind(this, listItem.id, listItem.original_title)}
             like = { this.checkIfMovieLiked(listItem.id) }
           />
         ))}
@@ -62,11 +81,18 @@ export default connect(
       };
     },
     (dispatch) => {
+
       return {
         onGetMovieList: () => dispatch(getMovieList()),
         onGetGenreList: () => dispatch(getGenreList()),
         onGetGenreMovieList: (genreID) => dispatch(getGenreMovieList(genreID)),
-        onSetMovieLike: (movieID) => dispatch(setMovieLiked(movieID))
+        onSetMovieLike: (movieID) => dispatch(setMovieLiked(movieID)),
+        onAddLog: (object) => {
+            const date = new Date();
+            const dateTime = date.getFullYear() + '-' +date.getMonth() + '-' + date.getDate() +
+                ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+            dispatch(AddLog(dateTime,object))
+        }
       };
     }
 )(App);
